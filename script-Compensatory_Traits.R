@@ -203,7 +203,7 @@ curve((coef.m3[1]+coef.m3[3])+((coef.m3[2]+coef.m3[4])*x),add=T,col='black',
 plot(musc1~scale(peso_propodo), data = data1, pch = 21, 
      bg = c(alpha("gray",0.75), alpha("black",0.75))[as.numeric(sex)],
      xlab = "Pereopod weight (scaled and centered)", 
-     ylab = "Pereopod muscle's weight (mg)",
+     ylab = "Pereopod muscle weight (mg)",
      cex = 1.2, bty = "l",las =1)
 
 ## Uff, highly exponential. That is a bit tricky to handle without using complex
@@ -212,7 +212,7 @@ plot(musc1~scale(peso_propodo), data = data1, pch = 21,
 plot(log(musc1+1)~scale(log(peso_propodo)), data = data1, pch = 21, 
      bg = c(alpha("gray",0.75), alpha("black",0.75))[as.numeric(sex)],
      xlab = "Pereopod weight (scaled and centered)", 
-     ylab = "Pereopod muscle's weight (log)",
+     ylab = "Pereopod muscle weight (log)",
      cex = 1.2, bty = "l",las =1)
 
 ## Not *THAT* linear, but we could use a Gamma distribution... But first,
@@ -244,7 +244,7 @@ testInteractions(m4.gam,pairwise="sex")
 plot(log(musc1+1)~scale(log(peso_propodo)), data = data1, pch = 21, 
      bg = c(alpha("gray",0.75), alpha("black",0.75))[as.numeric(sex)],
      xlab = "Pereopod weight (scaled and centered)", 
-     ylab = "Pereopod muscle's weight (log)",
+     ylab = "Pereopod muscle weight (log)",
      cex = 1.2, bty = "l",las =1)
 
 #Females
@@ -278,7 +278,7 @@ curve((coef.m3[1]+coef.m3[3])+((coef.m3[2]+coef.m3[4])*x),add=T,col='black',
 plot(log(musc1+1)~scale(log(peso_propodo)), data = data1, pch = 21, 
      bg = c(alpha("gray",0.75), alpha("black",0.75))[as.numeric(sex)],
      xlab = "Pereopod weight (scaled and centered)", 
-     ylab = "Pereopod muscle's weight (log)",
+     ylab = "Pereopod muscle weight (log)",
      cex = 1.2, bty = "l",las =1)
 mtext("(b)",4,las=1,padj=-12,adj=-1)
 
