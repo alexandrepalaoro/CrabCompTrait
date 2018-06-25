@@ -2,10 +2,11 @@
 ## These are the analyses used to test whether aeglids have compensatory       ##
 ## traits, or if the water acts a compensatory trait. First, we test           ##
 ## if male and female crabs have different walking performances under two      ##
-## conditions: with water flow, or no water flow. Afterwards, we test if       ##
-## heavier males walk faster or slower than lighter males. For dimorphism,     ##
-## first we test if males have longer pereopods than females. Second, we test  ##
-## if males with heavier claws have proportionally larger pereopods.           ##
+## conditions: with water flow, or no water flow. Afterwards, we test if males ##
+## are more asymmetric than females. Then, we test if heavier males walk       ##
+## faster or slower than lighter males. For dimorphism, first we test if       ##
+## males have longer pereopods than females. Third, we test if males with      ##
+## heavier claws have proportionally larger pereopods.                         ##
 ## And that's about what you will see here :D                                  ##
 #################################################################################
 
@@ -79,28 +80,29 @@ testInteractions(m1.s,pairwise='sex')
 
 ## No difference in the results. So, we can keep the first analysis.
 
-tiff(file="Figure2.tiff",units="mm",width=180,height=150,res=600,
+png(file="Figure2.png", units='mm',width=200,height=150,res=600)
+tiff(file="Figure2.tiff",units="mm",width=200,height=150,res=600,
      compression="lzw")
 
 par(mar=c(5,5,2,2)+0.1)
 
-plot(vm~scale(cc),data=comptrait2,las=1,bty='l',cex=1.3,pch=21,
+plot(vm~scale(cc),data=comptrait2,las=1,bty='l',cex=1.5,pch=21,
      bg=c(alpha("grey",0.75),alpha("black",0.75))[as.numeric(sex)],
      xlab="Cephalothorax length (scaled and centered)",
      ylab="Maximum speed (cm/s)",ann=F)
 mtext(side=2,text="Maximum speed (cm/s)",line=4)
 mtext(side=1,text="Cephalothorax length (scaled and centered)",line=3)
 #Female's regression line
-curve((coef.m1[1]+(coef.m1[2]*x)),add=T,lwd=2,col='grey',
+curve((coef.m1[1]+(coef.m1[2]*x)),add=T,lwd=3,col='grey',
       from=-1.5,to=0.5) #no-flow
-curve((coef.m1[1]+coef.m1[4])+(coef.m1[2]*x),add=T,lwd=2,col='grey',
+curve((coef.m1[1]+coef.m1[4])+(coef.m1[2]*x),add=T,lwd=3,col='grey',
       lty=2,from=-1.5,to=0.5) #flow
 
 #Male's regression line
 curve(((coef.m1[1]+coef.m1[3])+((coef.m1[2]+coef.m1[5])*x)),add=T,
-      lwd=2,col='black',from=-0.5,to=1.6) #no-flow
+      lwd=3,col='black',from=-0.5,to=1.6) #no-flow
 curve(((coef.m1[1]+coef.m1[3]+coef.m1[4])+((coef.m1[2]+coef.m1[5])*x)),add=T,
-      lwd=2,col='black',from=-0.5,to=1.6,lty=2) #flow
+      lwd=3,col='black',from=-0.5,to=1.6,lty=2) #flow
 legend("topright",c("Female","Male"),cex=1.3,bty='n',
        pch=21,pt.bg= c(alpha("gray",0.75), alpha("black",0.75)))
 
@@ -113,7 +115,7 @@ dev.off()
 ## scaling pattern, to length, which scales linearly - we could find
 ## a relation simply because the scaling patterns differ. 
 ## To avoid that, we need to find a good proxy for weight that also 
-## scales linearly. We have two candidates: claw length and weight.
+## scales linearly. We have two candidates: claw length and height.
 ## To select between them, we will use the R-square of a linear 
 ## regression: the highest R-square will be used as the proxy in the
 ## next analysis.
@@ -135,9 +137,68 @@ plot(m2,which=1)
 summary(m1) #Adjusted R-squared: 0.9861
 summary(m2) #Adjusted R-squared: 0.9935
 
-## Claw height wins! Now, to the real test
+## Claw height wins! Now, to the real tests
 
 data1<-read.csv("Esquerdo_Dados.csv", header = T)
+
+## First, we have to test if males and females have asymmetric legs. However,
+## since legs are correlated to body size, we regress leg length against body size
+## and then use the residuals to test.
+
+resid.leg<-lmer(p~sex*scale(cc)+(1|id),data=data1)
+plot(resid.pereop)
+summary(resid.pereop)
+
+## Seems fine, so let's add to the main data.frame
+
+data1$resid<-residuals(resid.pereop)
+
+## Now, we divide in two data.frames. One for the pereopods on the left side of the body, 
+## and another for the pereopods on the right side
+
+left<-data1[data1$side=="left",]
+right<-data1[data1$side=="right",]
+
+## Plotting...
+
+plot(left$resid~right$resid,bty='l',las=1,cex=1.5,
+     pch=21,bg=c(alpha("lightgrey",0.75),alpha("grey30",0.75))[as.numeric(left$sex)])
+
+## There are two possible female outliers. So we have to perform a sensibility test 
+## once again. But first let's test without messing around.
+
+asym<-lm(left$resid~right$resid*left$sex)
+plot(asym,which=1,col=left$sex)
+summary(asym)
+summary.aov(asym)
+
+## No difference for the sex factor; males are not more asymmetrical (or symmetrical)
+## than females. The next step is checking the impact of those outliers in our analysis
+## So, we will remove the outliers and rerun the analysis.
+
+left1<-left[left$resid!=max(left$resid)&left$resid!=min(left$resid),]
+right1<-right[right$resid!=max(right$resid)&right$resid!=min(right$resid),]
+
+asym1<-lm(left1$resid~right1$resid*left1$sex)
+plot(asym1,which=1,col=left1$sex)
+summary(asym1)
+
+# Results did not change much... Let's see the plot
+
+plot(left1$resid~right1$resid,bty='l',las=1,cex=1.5,
+     pch=21,bg=c(alpha("lightgrey",0.75),alpha("grey30",0.75))[as.numeric(left1$sex)])
+asym1.p<-lm(left1$resid~right1$resid*left1$sex-1)
+
+curve(coef(asym1.p)[2]+(coef(asym1.p)[1]*x),add=T,lwd=2,lty=2,col=alpha("lightgrey",0.75))
+curve(coef(asym1.p)[3]+((coef(asym1.p)[1]+coef(asym1.p)[4])*x),add=T,lwd=2,lty=2,col=alpha("grey30",0.75))
+
+## I will leave this here to make plotting the curves easier later on
+asym.p<-lm(left$resid~right$resid*left$sex-1)
+coef(asym.p)[1]+coef(asym.p)[4]
+confint(asym.p)[1,1]+confint(asym.p)[4,1]
+confint(asym.p)[1,2]+confint(asym.p)[4,2]
+
+## Now, moving to the other tests
 
 ## Let's look at how the data scales before jumping on the tests
 
@@ -186,7 +247,7 @@ testInteractions(m3.log,pairwise = 'sex')
 plot(log(p)~scale(log(ap)), data = data1, pch = 21,ann=T,  
      bg = c(alpha("gray",0.75), alpha("black",0.75))[as.numeric(sex)], 
      xlab = "Claw height (scaled and centered)", ylab = "Pereopod length (cm)",
-     cex = 1.3, bty = "l",las =1)
+     cex = 1.5, bty = "l",las =1)
 
 #Female
 curve(coef.m3[1]+(coef.m3[2]*x),add=T,col='grey',lwd=2,from=-2,to=0.2)
@@ -203,8 +264,8 @@ curve((coef.m3[1]+coef.m3[3])+((coef.m3[2]+coef.m3[4])*x),add=T,col='black',
 plot(musc1~scale(peso_propodo), data = data1, pch = 21, 
      bg = c(alpha("gray",0.75), alpha("black",0.75))[as.numeric(sex)],
      xlab = "Pereopod weight (scaled and centered)", 
-     ylab = "Pereopod muscle weight (mg)",
-     cex = 1.2, bty = "l",las =1)
+     ylab = "Pereopod muscle's weight (mg)",
+     cex = 1.5, bty = "l",las =1)
 
 ## Uff, highly exponential. That is a bit tricky to handle without using complex
 ## models. Let's try logging it.
@@ -212,8 +273,8 @@ plot(musc1~scale(peso_propodo), data = data1, pch = 21,
 plot(log(musc1+1)~scale(log(peso_propodo)), data = data1, pch = 21, 
      bg = c(alpha("gray",0.75), alpha("black",0.75))[as.numeric(sex)],
      xlab = "Pereopod weight (scaled and centered)", 
-     ylab = "Pereopod muscle weight (log)",
-     cex = 1.2, bty = "l",las =1)
+     ylab = "Pereopod muscle's weight (log)",
+     cex = 1.5, bty = "l",las =1)
 
 ## Not *THAT* linear, but we could use a Gamma distribution... But first,
 ## let's check how a linear regression handles it.
@@ -236,7 +297,7 @@ summary(m4.gam)
 testInteractions(m4.gam,pairwise="sex",slope="scale(log(peso_propodo))")
 testInteractions(m4.gam,pairwise="sex")
 
-## Not difference, but the mean effect is borderline significant (p=0.06):
+## No difference, but the mean effect is borderline significant (p=0.06):
 ## Females have more muscle on average. Let's check the plot...
 
 (coef.m4<-m4.gam@beta)
@@ -244,48 +305,62 @@ testInteractions(m4.gam,pairwise="sex")
 plot(log(musc1+1)~scale(log(peso_propodo)), data = data1, pch = 21, 
      bg = c(alpha("gray",0.75), alpha("black",0.75))[as.numeric(sex)],
      xlab = "Pereopod weight (scaled and centered)", 
-     ylab = "Pereopod muscle weight (log)",
-     cex = 1.2, bty = "l",las =1)
+     ylab = "Pereopod muscle's weight (log)",
+     cex = 1.5, bty = "l",las =1)
 
 #Females
-curve(exp(coef.m4[1]+(coef.m4[2]*x)),add=T,col='grey',lwd=2,
+curve(exp(coef.m4[1]+(coef.m4[2]*x)),add=T,col='grey',lwd=3,
       from=-2,to=0.2)
 #Males
 curve(exp((coef.m4[1]+coef.m4[3])+((coef.m4[2]+coef.m4[4])*x)),add=T,col='black',
-      lwd=2,from=-1,to=2.1)
+      lwd=3,from=-1,to=2.1)
 
 ## Now, I will plot the figure andn that should be it for the day
 
+# png(file="Figure3-PANEL.png", units='mm',width=300,height=90,res=600)
 
-tiff(file="Figure3-PANEL.tiff",units="mm",width=220,height=120,res=600,
-     compression="lzw")
-par(mfrow=c(1,2),mar=c(4,4,2,3))
+# tiff(file="Figure3-PANEL.tiff",units="mm",width=300,height=90,res=600,
+#     compression="lzw")
+
+par(mfrow=c(1,3),mar=c(4,4,2,3))
+
+plot(left$resid~right$resid,bty='l',las=1,cex=1.5,
+     pch=21,bg=c(alpha("gray",0.75),alpha("black",0.75))[as.numeric(left$sex)],
+     ylab="Residuals of the left pereopod length",
+     xlab="Residuals of the left pereopod length")
+curve(coef(asym.p)[2]+(coef(asym.p)[1]*x),add=T,lwd=3,col=alpha("gray",0.75))
+curve(coef(asym.p)[3]+((coef(asym.p)[1]+coef(asym.p)[4])*x),add=T,lwd=3,
+      col=alpha("black",0.75),from=-0.7,to=0.7)
+mtext("(a)",4,las=1,padj=-12,adj=-1)
+
 plot(log(p)~scale(log(ap)), data = data1, pch = 21,ann=T,  
      bg = c(alpha("gray",0.75), alpha("black",0.75))[as.numeric(sex)], 
      xlab = "Claw height (scaled and centered)", ylab = "Pereopod length (cm)",
-     cex = 1.3, bty = "l",las =1)
-mtext("(a)",4,las=1,padj=-12,adj=-1)
+     cex = 1.5, bty = "l",las =1)
+mtext("(b)",4,las=1,padj=-12,adj=-1)
 legend("topleft",c("Female","Male"),cex=1.3,bty='n',
        pch=21,pt.bg= c(alpha("gray",0.75), alpha("black",0.75)))
 
 #Female
-curve(coef.m3[1]+(coef.m3[2]*x),add=T,col='grey',lwd=2,from=-2,to=0.2)
+curve(coef.m3[1]+(coef.m3[2]*x),add=T,col='grey',lwd=3,from=-2,to=0.2)
 
 #Male
 curve((coef.m3[1]+coef.m3[3])+((coef.m3[2]+coef.m3[4])*x),add=T,col='black',
-      lwd=2,from=-1,to=2.1)
+      lwd=3,from=-1,to=2.1)
 
 plot(log(musc1+1)~scale(log(peso_propodo)), data = data1, pch = 21, 
      bg = c(alpha("gray",0.75), alpha("black",0.75))[as.numeric(sex)],
-     xlab = "Pereopod weight (scaled and centered)", 
+     xlab = "Claw weight (scaled and centered)", 
      ylab = "Pereopod muscle weight (log)",
-     cex = 1.2, bty = "l",las =1)
-mtext("(b)",4,las=1,padj=-12,adj=-1)
+     cex = 1.5, bty = "l",las =1)
+mtext("(c)",4,las=1,padj=-12,adj=-1)
 
 #Females
-curve(exp(coef.m4[1]+(coef.m4[2]*x)),add=T,col='grey',lwd=2,
+curve(exp(coef.m4[1]+(coef.m4[2]*x)),add=T,col='grey',lwd=3,
       from=-2,to=0.2)
 #Males
 curve(exp((coef.m4[1]+coef.m4[3])+((coef.m4[2]+coef.m4[4])*x)),add=T,col='black',
-      lwd=2,from=-1,to=2.1)
+      lwd=3,from=-1,to=2.1)
 dev.off()
+ 
+# DONE :D
