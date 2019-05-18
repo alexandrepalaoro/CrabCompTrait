@@ -25,7 +25,7 @@ If you use anything from this repository, please cite our DOI:
 | cc           | mm          | Propodus height                                                        |
 | p            | mm          | Pereopod length                                                        |
 | tempo        | milisecond  | Time the individual took to cross the experimental corridor            |
-| vm           | cm/ms       | Maximum speed                                                          |
+| vm           | cm/s        | Maximum speed                                                          |
 | peso_p_antes | mg          | Pereopod total weight                                                  |
 | p_depois     | mg          | Pereopod exoskeleton weight                                            |
 | musc1        | mg          | Muscle content = pereopod total weight <i>minus</i> exoskeleton weight |
