@@ -12,4 +12,21 @@ If you use anything from this repository, please cite our DOI:
 
 <b>script4github</b>: *R code*. Code that organizes the data in the .csv file (not posted yet) and performs all analyses in the paper</br>
 
-###### Data will be posted when the paper is accepted.
+<b>data.csv</b>: *dataset*. Dataset with all the data used in the analyses of the manuscript.</br>
+
+
+###### Dataset metadata (will be posted soon): </br>
+
+
+| Measures     | Unit        | Legend                                                                 |
+| ------------ | ----------- | ---------------------------------------------------------------------- |
+| cc           | mm          | Cephalothorax length                                                   |
+| cp           | mm          | Propodus length                                                        |
+| cc           | mm          | Propodus height                                                        |
+| p            | mm          | Pereopod length                                                        |
+| tempo        | milisecond  | Time the individual took to cross the experimental corridor            |
+| vm           | cm/ms       | Maximum speed                                                          |
+| peso_p_antes | mg          | Pereopod total weight                                                  |
+| p_depois     | mg          | Pereopod exoskeleton weight                                            |
+| musc1        | mg          | Muscle content = pereopod total weight <i>minus</i> exoskeleton weight |
+| porcent.1    | %           | Percent of propodus weight in relation to total body weight            |
