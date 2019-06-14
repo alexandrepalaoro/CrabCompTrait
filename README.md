@@ -1,6 +1,6 @@
 # CrabCompTrait
 
-Codes of the paper entitled "How can males compensate for exaggerated weapons? The role of morphology and environment on crab locomotor performance".
+Codes and dataset of the paper entitled "Underwater compensation for exaggerated weaponry: The role of morphology and environment on crab locomotor performance", published in <strong>Journal of Experimental Zoology Part A: Ecological Genetics and Physiology</strong>. A link to the published paper will be posted as soon as the pdf is available.
 
 If you use anything from this repository, please cite our DOI:
 
@@ -15,7 +15,7 @@ If you use anything from this repository, please cite our DOI:
 <b>data.csv</b>: *dataset*. Dataset with all the data used in the analyses of the manuscript.</br>
 
 
-###### Dataset metadata (will be posted soon): </br>
+###### Dataset metadata: </br>
 
 
 | Measures     | Unit        | Legend                                                                 |
