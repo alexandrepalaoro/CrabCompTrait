@@ -5,7 +5,7 @@ Codes and dataset of the paper entitled "<strong>Underwater compensation for exa
 
 If you use anything from this repository, please cite the paper:
 
-# Benso-Lopes, F; Santos, S & Palaoro, AV (2019) Underwater compensation for exaggerated weaponry: The role of morphology and environment on crab locomotor performance. Journal of Experimental Zoology part A, 331(7): 382-391. DOI: 10.1002/jez.2305. #
+###### Benso-Lopes, F; Santos, S & Palaoro, AV (2019) Underwater compensation for exaggerated weaponry: The role of morphology and environment on crab locomotor performance. Journal of Experimental Zoology part A, 331(7): 382-391. DOI: 10.1002/jez.2305. 
 
 
 -----------------------
